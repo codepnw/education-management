@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func ConnectDatabase() error {
+func ConnectDatabase() (*sql.DB, error) {
 	dsn := fmt.Sprintf(
 		"postgres://%s:%s@%s/%s?sslmode=disable",
 		os.Getenv("DB_USER"),
@@ -26,6 +26,5 @@ func ConnectDatabase() error {
 	if err := db.Ping(); err != nil {
 		log.Fatalf("Failed to ping the database: %v", err)
 	}
-
-	return nil
+	return db, nil
 }
