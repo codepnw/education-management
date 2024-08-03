@@ -17,7 +17,7 @@ func NewStudentRepository(db *sql.DB) interfaces.IStudentRepository {
 	return &studentRepository{db: db}
 }
 
-func (sr *studentRepository) CreateStudent(student entities.Student) (string, error) {
+func (sr *studentRepository) CreateStudent(student entities.Student) (string, error) {	
 	query := `
 		INSERT INTO students (
 			first_name,
