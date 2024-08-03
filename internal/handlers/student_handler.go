@@ -6,6 +6,7 @@ import (
 
 	"github.com/codepnw/education/internal/entities"
 	"github.com/codepnw/education/internal/usecases"
+	"github.com/codepnw/education/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,6 +23,18 @@ func (sh *StudentHandler) CreateStudent(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&student); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dob, err := utils.IsValidDate(student.DOB)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	student.DOB = dob
+
+	if !utils.IsValidPhone(student.Phone) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid phone format: 10 numbers"})
 		return
 	}
 

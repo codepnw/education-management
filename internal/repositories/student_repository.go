@@ -28,7 +28,6 @@ func (sr *studentRepository) CreateStudent(student entities.Student) (string, er
 		) VALUES ($1, $2, $3, $4, $5)
 		RETURNING id;
 	`
-	var id string
 
 	err := sr.db.QueryRow(
 		query,
@@ -37,13 +36,13 @@ func (sr *studentRepository) CreateStudent(student entities.Student) (string, er
 		student.DOB,
 		student.Phone,
 		student.Address,
-	).Scan(&id)
+	).Scan(&student.ID)
 
 	if err != nil {
 		return "", fmt.Errorf("query student failed: %v", err)
 	}
 
-	return id, nil
+	return student.ID, nil
 }
 
 func (sr *studentRepository) GetAllStudents() ([]entities.Student, error) {
