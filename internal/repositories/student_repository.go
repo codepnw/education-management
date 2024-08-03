@@ -17,7 +17,7 @@ func NewStudentRepository(db *sql.DB) interfaces.IStudentRepository {
 	return &studentRepository{db: db}
 }
 
-func (sr *studentRepository) CreateStudent(student entities.Student) (string, error) {	
+func (sr *studentRepository) CreateStudent(student *entities.Student) (string, error) {	
 	query := `
 		INSERT INTO students (
 			first_name,
@@ -45,7 +45,7 @@ func (sr *studentRepository) CreateStudent(student entities.Student) (string, er
 	return student.ID, nil
 }
 
-func (sr *studentRepository) GetAllStudents() ([]entities.Student, error) {
+func (sr *studentRepository) GetAllStudents() ([]*entities.Student, error) {
 	query := `
 		SELECT
 			id,
@@ -64,7 +64,8 @@ func (sr *studentRepository) GetAllStudents() ([]entities.Student, error) {
 	}
 	defer rows.Close()
 
-	var students []entities.Student
+	students := make([]*entities.Student, 0)
+
 	for rows.Next() {
 		var student entities.Student
 
@@ -81,13 +82,46 @@ func (sr *studentRepository) GetAllStudents() ([]entities.Student, error) {
 		if err != nil {
 			return nil, err
 		}
-		students = append(students, student)
+		students = append(students, &student)
 	}
 
 	return students, nil
 }
 
-func (sr *studentRepository) UpdateStudentByID(id string, student entities.Student) error {
+func (sr *studentRepository) GetStudentByID(id string) (*entities.Student, error) {
+	query := `
+		SELECT
+			id,
+			first_name,
+			last_name,
+			dob,
+			phone,
+			address,
+			created_at,
+			updated_at
+		FROM students
+		WHERE id = $1;		
+	`
+	student := new(entities.Student)
+
+	err := sr.db.QueryRow(query, id).Scan(
+		&student.ID,
+		&student.FirstName,
+		&student.LastName,
+		&student.DOB,
+		&student.Phone,
+		&student.Address,
+		&student.CreatedAt,
+		&student.UpdatedAt,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("student not found: %v", err)
+	}
+
+	return student, nil
+}
+
+func (sr *studentRepository) UpdateStudentByID(id string, student *entities.Student) error {
 	query := `
 		UPDATE students SET 
 			first_name = $1,

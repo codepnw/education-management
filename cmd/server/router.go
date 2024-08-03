@@ -35,6 +35,7 @@ func (r *routerFactory) StudentsRouter() {
 
 	router.POST("/", handler.CreateStudent)
 	router.GET("/", handler.GetAllStudents)
+	router.GET("/:id", handler.GetTeacherByID)
 	router.PATCH("/:id", handler.UpdateStudentByID)
 	router.DELETE("/:id", handler.DeleteStudent)
 }

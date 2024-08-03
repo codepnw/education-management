@@ -11,15 +11,15 @@ import (
 )
 
 type StudentHandler struct {
-	studentUsecase *usecases.StudentUsecase
+	usecase *usecases.StudentUsecase
 }
 
 func NewStudentHandler(su *usecases.StudentUsecase) *StudentHandler {
-	return &StudentHandler{studentUsecase: su}
+	return &StudentHandler{usecase: su}
 }
 
 func (sh *StudentHandler) CreateStudent(c *gin.Context) {
-	var student entities.Student
+	var student *entities.Student
 
 	if err := c.ShouldBindJSON(&student); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -38,7 +38,7 @@ func (sh *StudentHandler) CreateStudent(c *gin.Context) {
 		return
 	}
 
-	id, err := sh.studentUsecase.CreateStudent(student)
+	id, err := sh.usecase.CreateStudent(student)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,7 +49,7 @@ func (sh *StudentHandler) CreateStudent(c *gin.Context) {
 }
 
 func (sh *StudentHandler) GetAllStudents(c *gin.Context) {
-	students, err := sh.studentUsecase.GetAllStudents()
+	students, err := sh.usecase.GetAllStudents()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -57,16 +57,26 @@ func (sh *StudentHandler) GetAllStudents(c *gin.Context) {
 	c.JSON(http.StatusOK, students)
 }
 
+func (sh *StudentHandler) GetTeacherByID(c *gin.Context) {
+	id := c.Param("id")
+	teacher, err := sh.usecase.GetStudentByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, teacher)
+}
+
 func (sh *StudentHandler) UpdateStudentByID(c *gin.Context) {
 	id := c.Param("id")
 
-	var student entities.Student
+	var student *entities.Student
 	if err := c.ShouldBindJSON(&student); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := sh.studentUsecase.UpdateStudentByID(id, student); err != nil {
+	if err := sh.usecase.UpdateStudentByID(id, student); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -76,7 +86,7 @@ func (sh *StudentHandler) UpdateStudentByID(c *gin.Context) {
 func (sh *StudentHandler) DeleteStudent(c *gin.Context) {
 	id := c.Param("id")
 
-	if err := sh.studentUsecase.DeleteStudent(id); err != nil {
+	if err := sh.usecase.DeleteStudent(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
