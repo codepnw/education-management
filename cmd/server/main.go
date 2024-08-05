@@ -25,6 +25,8 @@ func main() {
 	
 	router.StudentsRouter()
 	router.TeachersRouter()
+	router.ClassroomRouter()
+	router.CourseRouter()
 
 	r.Run(":" + os.Getenv("PORT"))
 }

@@ -12,6 +12,8 @@ import (
 type RouterFactory interface {
 	StudentsRouter()
 	TeachersRouter()
+	ClassroomRouter()
+	CourseRouter()
 }
 
 type routerFactory struct {
@@ -52,4 +54,32 @@ func (r *routerFactory) TeachersRouter() {
 	router.GET("/:id", handler.GetTeacherByID)
 	router.PATCH("/:id", handler.UpdateTeacher)
 	router.DELETE("/:id", handler.DeleteTeacher)
+}
+
+func (r *routerFactory) ClassroomRouter() {
+	repo := repositories.NewClassroomRepository(r.db)
+	usecase := usecases.NewClassroomUsecase(repo)
+	handler := handlers.NewClassroomHandler(usecase)
+
+	router := r.e.Group("/classroom")
+
+	router.POST("/", handler.CreateClassroom)
+	router.GET("/", handler.GetAllClassroom)
+	router.GET("/:id", handler.GetClassroomByID)
+	router.PATCH("/:id", handler.UpdateClassroom)
+	router.DELETE("/:id", handler.DeleteClassroom)
+}
+
+func (r *routerFactory) CourseRouter() {
+	repo := repositories.NewCourseRepository(r.db)
+	usecase := usecases.NewCourseUsecase(repo)
+	handler := handlers.NewCourseHandler(usecase)
+
+	router := r.e.Group("/courses")
+
+	router.POST("/", handler.CreateCourse)
+	router.GET("/", handler.GetAllCourses)
+	router.GET("/:id", handler.GetCourseByID)
+	router.PATCH("/:id", handler.UpdateCourse)
+	router.DELETE("/:id", handler.DeleteCourse)
 }
