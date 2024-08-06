@@ -28,6 +28,7 @@ func main() {
 	router.ClassroomRouter()
 	router.CourseRouter()
 	router.EnrollmentRouter()
+	router.ScheduleRouter()
 
 	r.Run(":" + os.Getenv("PORT"))
 }

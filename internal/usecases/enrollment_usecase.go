@@ -6,10 +6,10 @@ import (
 )
 
 type EnrollmentUsecase struct {
-	repo interfaces.Enrollment
+	repo interfaces.EnrollmentRepository
 }
 
-func NewEnrollmentUsecase(repo interfaces.Enrollment) *EnrollmentUsecase {
+func NewEnrollmentUsecase(repo interfaces.EnrollmentRepository) *EnrollmentUsecase {
 	return &EnrollmentUsecase{repo: repo}
 }
 

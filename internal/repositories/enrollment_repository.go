@@ -13,7 +13,7 @@ type enrollmentRepository struct {
 	db *sql.DB
 }
 
-func NewEnrollmentRepository(db *sql.DB) interfaces.Enrollment {
+func NewEnrollmentRepository(db *sql.DB) interfaces.EnrollmentRepository {
 	return &enrollmentRepository{db: db}
 }
 
