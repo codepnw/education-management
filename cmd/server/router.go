@@ -14,6 +14,7 @@ type RouterFactory interface {
 	TeachersRouter()
 	ClassroomRouter()
 	CourseRouter()
+	EnrollmentRouter()
 }
 
 type routerFactory struct {
@@ -82,4 +83,18 @@ func (r *routerFactory) CourseRouter() {
 	router.GET("/:id", handler.GetCourseByID)
 	router.PATCH("/:id", handler.UpdateCourse)
 	router.DELETE("/:id", handler.DeleteCourse)
+}
+
+func (r *routerFactory) EnrollmentRouter() {
+	repo := repositories.NewEnrollmentRepository(r.db)
+	usecase := usecases.NewEnrollmentUsecase(repo)
+	handler := handlers.NewEnrollmentHandler(usecase)
+
+	router := r.e.Group("/enrollment")
+
+	router.POST("/", handler.CreateEnroll)
+	router.GET("/", handler.GetAllEnroll)
+	router.GET("/:id", handler.GetEnrollByID)
+	router.PATCH("/:id", handler.UpdateEnroll)
+	router.DELETE("/:id", handler.DeleteEnroll)
 }
